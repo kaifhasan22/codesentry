@@ -28,7 +28,7 @@ export function NewScan() {
     try {
       const created = await createScan(repoUrl)
       setScan(created)
-      startPolling(created.scan_id ?? created.id, repoUrl)
+      startPolling(created.scan_id ?? created.id)
     } catch (err) {
       setError(toUserMessage(err))
     } finally {
@@ -36,7 +36,7 @@ export function NewScan() {
     }
   }
 
-  function startPolling(scanId, repoUrl) {
+  function startPolling(scanId) {
     pollRef.current = setInterval(async () => {
       try {
         const latest = await getScan(scanId)
@@ -44,9 +44,7 @@ export function NewScan() {
         if (TERMINAL_STATUSES.includes(latest.status)) {
           clearInterval(pollRef.current)
           if (latest.status === 'completed') {
-            // GET /api/scans/{id} doesn't return repo_url, so it's passed
-            // along here rather than re-fetched or invented.
-            navigate(`/scans/${scanId}`, { state: { repo_url: repoUrl } })
+            navigate(`/scans/${scanId}`)
           }
         }
       } catch (err) {

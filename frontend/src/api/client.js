@@ -66,6 +66,9 @@ export function toUserMessage(error) {
   if (status === 404) {
     return 'That resource could not be found.'
   }
+  if (status === 503) {
+    return error.response.data?.detail || 'CodeSentry is temporarily unavailable. Please try again.'
+  }
   if (status >= 500) {
     return 'Something went wrong while communicating with CodeSentry.'
   }

@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime, timezone
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.auth import create_access_token, get_current_user, hash_password, verify_password
 from app.db import Base, engine, get_db
-from app.models import Issue, Repo, Scan, User
+from app.models import Issue, Repo, Scan, ScanStatus, User
 from app.schemas import (
     RegisterRequest,
     ScanCreateRequest,
     ScanCreateResponse,
+    ScanHistoryPage,
     ScanHistoryResponse,
     ScanResponse,
     TokenResponse,
@@ -72,14 +75,36 @@ def create_scan(
     db.add(scan)
     db.commit()
     db.refresh(scan)
-    run_scan.delay(scan.id)
+    try:
+        run_scan.delay(scan.id)
+    except Exception as exc:
+        scan.status = ScanStatus.FAILED.value
+        scan.error_message = "Scan could not be queued. Please retry."
+        scan.finished_at = datetime.now(timezone.utc)
+        db.commit()
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=scan.error_message,
+            headers={"Retry-After": "5"},
+        ) from exc
     return ScanCreateResponse(scan_id=scan.id, status=scan.status)
 
-@router.get("/scans", response_model=list[ScanHistoryResponse])
+@router.get("/scans", response_model=ScanHistoryPage)
 def list_scans(
+    response: Response,
+    offset: int = Query(default=0, ge=0),
+    limit: int | None = Query(default=None, ge=1, le=500),
+    scan_status: ScanStatus | None = Query(default=None, alias="status"),
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    filters = [Repo.owner_id == user.id]
+    if scan_status is not None:
+        filters.append(Scan.status == scan_status.value)
+
+    total = db.scalar(
+        select(func.count(Scan.id)).join(Repo, Scan.repo_id == Repo.id).where(*filters)
+    ) or 0
     rows = db.execute(
         select(
             Scan,
@@ -88,12 +113,14 @@ def list_scans(
         )
         .join(Repo, Scan.repo_id == Repo.id)
         .outerjoin(Issue, Issue.scan_id == Scan.id)
-        .where(Repo.owner_id == user.id)
+        .where(*filters)
         .group_by(Scan.id, Repo.source_url)
         .order_by(Scan.created_at.desc())
+        .offset(offset)
+        .limit(limit)
     ).all()
 
-    return [
+    items = [
         ScanHistoryResponse(
             id=scan.id,
             repo_url=source_url,
@@ -107,6 +134,8 @@ def list_scans(
         )
         for scan, source_url, issue_count in rows
     ]
+    response.headers["X-Total-Count"] = str(total)
+    return ScanHistoryPage(items=items, total=total, limit=limit, offset=offset)
 
 @router.get("/scans/{scan_id}", response_model=ScanResponse)
 def get_scan(scan_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
@@ -115,6 +144,7 @@ def get_scan(scan_id: int, db: Session = Depends(get_db), user: User = Depends(g
         raise HTTPException(status_code=404, detail="Scan not found")
     return ScanResponse.model_validate({
         "id": scan.id,
+        "repo_url": scan.repo.source_url,
         "status": scan.status,
         "score": scan.score,
         "error_message": scan.error_message,

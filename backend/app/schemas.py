@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, HttpUrl
 
+from app.models import ScanStatus
+
 
 class RegisterRequest(BaseModel):
     email: EmailStr
@@ -24,18 +26,25 @@ class ScanCreateRequest(BaseModel):
 class ScanCreateResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     scan_id: int
-    status: str
+    status: ScanStatus
 
 class ScanHistoryResponse(BaseModel):
     id: int
-    repo_url: str
-    status: str
+    repo_url: str | None
+    status: ScanStatus
     score: int | None
     error_message: str | None
     created_at: datetime
     started_at: datetime | None
     finished_at: datetime | None
     issue_count: int
+
+
+class ScanHistoryPage(BaseModel):
+    items: list[ScanHistoryResponse]
+    total: int
+    limit: int | None
+    offset: int
 
 
 class IssueResponse(BaseModel):
@@ -54,7 +63,8 @@ class IssueResponse(BaseModel):
 
 class ScanResponse(BaseModel):
     id: int
-    status: str
+    repo_url: str | None
+    status: ScanStatus
     score: int | None
     error_message: str | None
     started_at: datetime | None

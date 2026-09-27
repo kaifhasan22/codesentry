@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Bug, ShieldAlert, AlertTriangle, ScanLine, Plus } from 'lucide-react'
-import { listScans } from '../api/scans'
+import { getScan, listScans } from '../api/scans'
 import { toUserMessage } from '../api/client'
 import { Card } from '../components/ui/Card'
 import { Button } from '../components/ui/Button'
@@ -24,7 +24,8 @@ export function Dashboard() {
         setState({ loading: false, error: null, latest: null, hasAnyScans: false })
         return
       }
-      setState({ loading: false, error: null, latest: list[0], hasAnyScans: true })
+      const latest = await getScan(list[0].id)
+      setState({ loading: false, error: null, latest, hasAnyScans: true })
     } catch (err) {
       setState({ loading: false, error: toUserMessage(err), latest: null, hasAnyScans: null })
     }

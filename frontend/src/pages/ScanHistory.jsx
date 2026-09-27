@@ -91,12 +91,16 @@ export function ScanHistory() {
                           </Link>
                         </td>
                         <td className="px-4 py-3 text-ink-500 font-mono text-xs">#{scanId}</td>
-                        <td className="px-4 py-3 text-ink-500 text-xs">{formatDate(scan.started_at)}</td>
+                        <td className="px-4 py-3 text-ink-500 text-xs">
+                          {formatDate(scan.created_at || scan.started_at)}
+                        </td>
                         <td className="px-4 py-3">
                           <ScanStatusBadge status={scan.status} />
                         </td>
                         <td className="px-4 py-3 text-ink-300">{scan.score ?? '—'}</td>
-                        <td className="px-4 py-3 text-ink-300">{scan.issues?.length ?? '—'}</td>
+                        <td className="px-4 py-3 text-ink-300">
+                          {scan.issue_count ?? scan.issues?.length ?? '—'}
+                        </td>
                       </tr>
                     )
                   })}

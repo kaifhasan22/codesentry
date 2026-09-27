@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useParams, useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { CheckCircle2 } from 'lucide-react'
-import { getScan, getRegisteredRepoUrl } from '../api/scans'
+import { getScan } from '../api/scans'
 import { toUserMessage } from '../api/client'
 import { Card } from '../components/ui/Card'
 import { Skeleton } from '../components/ui/Skeleton'
@@ -17,7 +17,6 @@ import { formatDate, durationBetween, shortRepoName } from '../lib/utils'
 
 export function ScanResults() {
   const { id } = useParams()
-  const location = useLocation()
   const [state, setState] = useState({ loading: true, error: null, scan: null })
   const [selectedIssue, setSelectedIssue] = useState(null)
 
@@ -25,11 +24,7 @@ export function ScanResults() {
     setState({ loading: true, error: null, scan: null })
     try {
       const scan = await getScan(id)
-      // GET /api/scans/{id} doesn't return repo_url - use whatever was
-      // passed on navigation (fresh scan) or recorded at creation time
-      // (revisiting a link), rather than inventing one.
-      const repoUrl = location.state?.repo_url ?? getRegisteredRepoUrl(id)
-      setState({ loading: false, error: null, scan: { ...scan, repo_url: repoUrl } })
+      setState({ loading: false, error: null, scan })
     } catch (err) {
       setState({ loading: false, error: toUserMessage(err), scan: null })
     }
