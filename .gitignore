@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+codesentry.db
+node_modules/
+dist/
+.DS_Store

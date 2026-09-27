@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: codesentry
+      POSTGRES_USER: codesentry
+      POSTGRES_PASSWORD: codesentry
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codesentry -d codesentry"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+
+  api:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://codesentry:codesentry@postgres:5432/codesentry
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change-me-in-production
+      ALLOWED_GITHUB_HOSTS: github.com,www.github.com
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
+    volumes:
+      - scan_work:/tmp/codesentry
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build: ./backend
+    command: celery -A app.tasks.celery_app.celery_app worker --loglevel=INFO --concurrency=2
+    environment:
+      DATABASE_URL: postgresql+psycopg://codesentry:codesentry@postgres:5432/codesentry
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET: change-me-in-production
+      ALLOWED_GITHUB_HOSTS: github.com,www.github.com
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
+    volumes:
+      - scan_work:/tmp/codesentry
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+volumes:
+  postgres_data:
+  scan_work:
