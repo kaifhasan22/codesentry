@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.auth import create_access_token, get_current_user, hash_password, verify_password
 from app.db import Base, engine, get_db
-from app.models import Repo, Scan, User
+from app.models import Issue, Repo, Scan, User
 from app.schemas import (
-    LoginRequest,
     RegisterRequest,
     ScanCreateRequest,
     ScanCreateResponse,
+    ScanHistoryResponse,
     ScanResponse,
     TokenResponse,
 )
@@ -75,6 +75,38 @@ def create_scan(
     run_scan.delay(scan.id)
     return ScanCreateResponse(scan_id=scan.id, status=scan.status)
 
+@router.get("/scans", response_model=list[ScanHistoryResponse])
+def list_scans(
+    db: Session = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    rows = db.execute(
+        select(
+            Scan,
+            Repo.source_url,
+            func.count(Issue.id).label("issue_count"),
+        )
+        .join(Repo, Scan.repo_id == Repo.id)
+        .outerjoin(Issue, Issue.scan_id == Scan.id)
+        .where(Repo.owner_id == user.id)
+        .group_by(Scan.id, Repo.source_url)
+        .order_by(Scan.created_at.desc())
+    ).all()
+
+    return [
+        ScanHistoryResponse(
+            id=scan.id,
+            repo_url=source_url,
+            status=scan.status,
+            score=scan.score,
+            error_message=scan.error_message,
+            created_at=scan.created_at,
+            started_at=scan.started_at,
+            finished_at=scan.finished_at,
+            issue_count=issue_count,
+        )
+        for scan, source_url, issue_count in rows
+    ]
 
 @router.get("/scans/{scan_id}", response_model=ScanResponse)
 def get_scan(scan_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):

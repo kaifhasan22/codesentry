@@ -26,6 +26,17 @@ class ScanCreateResponse(BaseModel):
     scan_id: int
     status: str
 
+class ScanHistoryResponse(BaseModel):
+    id: int
+    repo_url: str
+    status: str
+    score: int | None
+    error_message: str | None
+    created_at: datetime
+    started_at: datetime | None
+    finished_at: datetime | None
+    issue_count: int
+
 
 class IssueResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
