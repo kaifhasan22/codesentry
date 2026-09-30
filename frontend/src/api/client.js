@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:8000'
 
 export const client = axios.create({
   baseURL: BASE_URL,
@@ -42,7 +42,7 @@ export function setUnauthorizedHandler(fn) {
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && error.config?.url !== '/api/auth/login') {
       clearToken()
       onUnauthorized?.()
     }
@@ -56,6 +56,9 @@ export function toUserMessage(error) {
   const status = error.response?.status
   if (!error.response) {
     return 'Unable to reach CodeSentry. Check that the backend is running.'
+  }
+  if (status === 401 && error.config?.url === '/api/auth/login') {
+    return 'Invalid email or password. Please try again.'
   }
   if (status === 401) {
     return 'Your session has expired. Please sign in again.'
@@ -72,5 +75,8 @@ export function toUserMessage(error) {
   if (status >= 500) {
     return 'Something went wrong while communicating with CodeSentry.'
   }
-  return error.response.data?.detail || 'Something went wrong.'
+  const detail = error.response.data?.detail
+  return typeof detail === 'string' ? detail : status === 422
+    ? 'Please check the submitted values and use a public GitHub repository URL.'
+    : 'Something went wrong.'
 }

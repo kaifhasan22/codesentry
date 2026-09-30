@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ShieldHalf, AlertCircle } from 'lucide-react'
+import { AlertCircle, ShieldHalf } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { toUserMessage } from '../api/client'
-import { Button } from '../components/ui/Button'
+import { Header } from '../components/layout/Header'
+import { ParticleField } from '../components/visual/ParticleField'
 
 export function Login() {
   const [email, setEmail] = useState('')
@@ -14,92 +15,71 @@ export function Login() {
   const navigate = useNavigate()
   const location = useLocation()
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(event) {
+    event.preventDefault()
     setError(null)
-
     if (!email.trim() || !password) {
       setError('Enter both an email and password.')
       return
     }
-
     setLoading(true)
     try {
       await login(email.trim(), password)
       clearSessionExpired()
       navigate(location.state?.from || '/dashboard', { replace: true })
-    } catch (err) {
-      setError(toUserMessage(err))
+    } catch (loginError) {
+      setError(toUserMessage(loginError))
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-950 px-4">
-      <div className="w-full max-w-sm">
-        <div className="flex items-center gap-2.5 justify-center mb-8">
-          <ShieldHalf size={24} className="text-beacon-500" />
-          <span className="font-display font-semibold text-xl text-ink-100 tracking-tight">
-            CodeSentry
-          </span>
-        </div>
+    <div className="auth-screen">
+      <Header />
+      <ParticleField subtle />
+      <main className="auth-content">
+        <section className="cs-card auth-card">
+          <div className="auth-brand"><ShieldHalf size={28} /></div>
+          <h1>Sign in</h1>
+          <p className="cs-description">Access your CodeSentry workspace.</p>
 
-        <div className="bg-base-850 border border-base-600 rounded-card p-6">
-          <h1 className="text-lg font-display font-semibold text-ink-100 mb-1">Sign in</h1>
-          <p className="text-sm text-ink-500 mb-6">Access your code health dashboard.</p>
+          {sessionExpired && <div className="cs-alert"><AlertCircle size={17} /> <span>Your session has expired. Please sign in again.</span></div>}
+          {error && <div className="cs-alert"><AlertCircle size={17} /> <span>{error}</span></div>}
 
-          {sessionExpired && (
-            <div className="mb-4 flex items-start gap-2 text-sm text-severity-medium bg-severity-medium/10 border border-severity-medium/20 rounded-md px-3 py-2">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              Your session has expired. Please sign in again.
-            </div>
-          )}
-
-          {error && (
-            <div className="mb-4 flex items-start gap-2 text-sm text-severity-critical bg-severity-critical/10 border border-severity-critical/20 rounded-md px-3 py-2">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-ink-300 mb-1.5">
-                Email
-              </label>
+          <form onSubmit={handleSubmit}>
+            <div className="auth-field">
+              <label className="cs-field" htmlFor="email">Email</label>
               <input
+                className="cs-input"
                 id="email"
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@example.com"
-                className="w-full bg-base-800 border border-base-600 rounded-md px-3 py-2 text-sm text-ink-100 placeholder:text-ink-700 focus:border-beacon-500 focus:ring-1 focus:ring-beacon-500 outline-none transition-colors"
+                required
               />
             </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-ink-300 mb-1.5">
-                Password
-              </label>
+            <div className="auth-field">
+              <label className="cs-field" htmlFor="password">Password</label>
               <input
+                className="cs-input"
                 id="password"
                 type="password"
                 autoComplete="current-password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-base-800 border border-base-600 rounded-md px-3 py-2 text-sm text-ink-100 placeholder:text-ink-700 focus:border-beacon-500 focus:ring-1 focus:ring-beacon-500 outline-none transition-colors"
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Enter your password"
+                required
               />
             </div>
-
-            <Button type="submit" loading={loading} className="w-full mt-2">
-              Sign in
-            </Button>
+            <button className="cs-btn auth-submit" type="submit" disabled={loading}>
+              {loading ? 'Signing in…' : 'Sign in'}
+            </button>
           </form>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   )
 }

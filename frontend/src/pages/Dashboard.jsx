@@ -1,122 +1,109 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Bug, ShieldAlert, AlertTriangle, ScanLine, Plus } from 'lucide-react'
+import { AlertTriangle, Bug, Plus, ScanLine, ShieldAlert } from 'lucide-react'
 import { getScan, listScans } from '../api/scans'
 import { toUserMessage } from '../api/client'
-import { Card } from '../components/ui/Card'
-import { Button } from '../components/ui/Button'
-import { SkeletonCard } from '../components/ui/Skeleton'
-import { EmptyState } from '../components/ui/EmptyState'
-import { ErrorState } from '../components/ui/ErrorState'
-import { StatCard } from '../components/dashboard/StatCard'
-import { HealthScoreGauge } from '../components/dashboard/HealthScoreGauge'
+import { formatDate, shortRepoName } from '../lib/utils'
 import { ScanStatusBadge } from '../components/scans/ScanStatusBadge'
-import { shortRepoName } from '../lib/utils'
+
+function Metric({ label, value, icon: Icon, tone }) {
+  return (
+    <section className="cs-card cs-card-pad cs-stat-card">
+      <div className="cs-stat-top">
+        <span>{label}</span>
+        <span className="cs-stat-icon" style={tone ? { color: tone } : undefined}><Icon size={17} /></span>
+      </div>
+      <strong className="cs-stat-value">{value}</strong>
+    </section>
+  )
+}
 
 export function Dashboard() {
-  const [state, setState] = useState({ loading: true, error: null, latest: null, hasAnyScans: null })
+  const [state, setState] = useState({ loading: true, error: null, latest: null })
 
   async function load() {
-    setState((s) => ({ ...s, loading: true, error: null }))
+    setState((current) => ({ ...current, loading: true, error: null }))
     try {
-      const list = await listScans()
-      if (list.length === 0) {
-        setState({ loading: false, error: null, latest: null, hasAnyScans: false })
+      const scans = await listScans()
+      if (!scans.length) {
+        setState({ loading: false, error: null, latest: null })
         return
       }
-      const latest = await getScan(list[0].id)
-      setState({ loading: false, error: null, latest, hasAnyScans: true })
-    } catch (err) {
-      setState({ loading: false, error: toUserMessage(err), latest: null, hasAnyScans: null })
+      const latest = await getScan(scans[0].id ?? scans[0].scan_id)
+      setState({ loading: false, error: null, latest })
+    } catch (error) {
+      setState({ loading: false, error: toUserMessage(error), latest: null })
     }
   }
 
-  useEffect(() => {
-    load()
-  }, [])
+  useEffect(() => { load() }, [])
 
   const issues = state.latest?.issues || []
-  const totalIssues = issues.length
-  const critical = issues.filter((i) => i.severity === 'critical').length
-  const high = issues.filter((i) => i.severity === 'high').length
+  const critical = issues.filter((issue) => issue.severity === 'critical').length
+  const high = issues.filter((issue) => issue.severity === 'high').length
+  const score = Math.max(0, Math.min(100, Number(state.latest?.score) || 0))
+  const scoreColor = score >= 80 ? '#36b987' : score >= 50 ? '#e8bd4d' : '#e53030'
 
   return (
-    <div>
-      <div className="flex items-start justify-between mb-8">
+    <div className="cs-page">
+      <div className="cs-page-heading">
         <div>
-          <h1 className="text-xl font-display font-semibold text-ink-100">Code Health Dashboard</h1>
-          <p className="text-sm text-ink-500 mt-1">
-            Overview of your most recent repository scan and its findings.
-          </p>
+          <p className="cs-eyebrow">Workspace overview</p>
+          <h1 className="cs-title">Code Health Dashboard</h1>
+          <p className="cs-description">A clear view of the latest analysis from your repositories.</p>
         </div>
-        <Link to="/scans/new">
-          <Button>
-            <Plus size={16} />
-            New Scan
-          </Button>
-        </Link>
+        <Link className="cs-btn" to="/scans/new"><Plus size={17} /> New Scan</Link>
       </div>
 
-      {state.loading && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <SkeletonCard key={i} />
-          ))}
+      {state.loading && <div className="cs-card cs-loading">Loading your scan data…</div>}
+
+      {!state.loading && state.error && (
+        <div className="cs-error-state">
+          <span>{state.error}</span>
+          <button type="button" className="cs-btn cs-btn-secondary" onClick={load}>Try again</button>
         </div>
       )}
 
-      {!state.loading && state.error && <ErrorState message={state.error} onRetry={load} />}
-
-      {!state.loading && !state.error && state.hasAnyScans === false && (
-        <Card>
-          <EmptyState
-            icon={ScanLine}
-            title="No code analyzed yet"
-            description="Run your first repository scan to see code health insights."
-            action={
-              <Link to="/scans/new">
-                <Button>Run your first scan</Button>
-              </Link>
-            }
-          />
-        </Card>
+      {!state.loading && !state.error && !state.latest && (
+        <section className="cs-card cs-empty">
+          <span className="cs-empty-icon"><ScanLine size={22} /></span>
+          <h2>No repository scans yet</h2>
+          <p>Start by scanning a Python repository. Your real results and findings will appear here.</p>
+          <Link className="cs-btn" to="/scans/new"><Plus size={16} /> Run your first scan</Link>
+        </section>
       )}
 
       {!state.loading && !state.error && state.latest && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <Card className="p-6 flex flex-col items-center justify-center lg:col-span-1">
-            <span className="text-sm text-ink-500 font-medium mb-4">Latest Health Score</span>
-            <HealthScoreGauge score={state.latest.score ?? 0} />
-            <Link
-              to={`/scans/${state.latest.id}`}
-              className="text-xs text-beacon-400 hover:text-beacon-300 mt-4"
-            >
-              {shortRepoName(state.latest.repo_url)}
-            </Link>
-          </Card>
-
-          <div className="lg:col-span-2 grid grid-cols-2 gap-4">
-            <StatCard label="Total Issues" value={totalIssues} icon={Bug} accentClass="text-ink-300" />
-            <StatCard
-              label="Critical Issues"
-              value={critical}
-              icon={ShieldAlert}
-              accentClass="text-severity-critical"
-            />
-            <StatCard
-              label="High Severity"
-              value={high}
-              icon={AlertTriangle}
-              accentClass="text-severity-high"
-            />
-            <Card className="p-5 flex flex-col justify-between">
-              <span className="text-sm text-ink-500 font-medium">Last Scan Status</span>
-              <div className="mt-3">
-                <ScanStatusBadge status={state.latest.status} />
+        <>
+          <div className="cs-grid-dashboard">
+            <section className="cs-card cs-card-pad cs-score-card">
+              <span className="cs-card-label">Latest health score</span>
+              <div className="cs-score-ring" style={{ '--score': score + '%', '--score-color': scoreColor }}>
+                <div className="cs-score-inner">
+                  <strong className="cs-score-value">{score}</strong>
+                  <span className="cs-score-scale">out of 100</span>
+                </div>
               </div>
-            </Card>
+              <span className="cs-score-status">{score >= 80 ? 'Healthy' : score >= 50 ? 'Needs attention' : 'At risk'}</span>
+              <Link className="cs-repo-link" to={'/scans/' + state.latest.id}>
+                {shortRepoName(state.latest.repo_url)}
+              </Link>
+            </section>
+
+            <div className="cs-stat-grid">
+              <Metric label="Total findings" value={issues.length} icon={Bug} />
+              <Metric label="Critical findings" value={critical} icon={ShieldAlert} tone="#f04a4a" />
+              <Metric label="High severity" value={high} icon={AlertTriangle} tone="#f2994a" />
+              <section className="cs-card cs-card-pad cs-stat-card">
+                <div className="cs-stat-top"><span>Latest scan</span><ScanStatusBadge status={state.latest.status} /></div>
+                <div>
+                  <strong className="cs-stat-value" style={{ fontSize: 18 }}>{formatDate(state.latest.finished_at || state.latest.started_at)}</strong>
+                  <Link className="cs-repo-link" to={'/scans/' + state.latest.id}>View scan details ↗</Link>
+                </div>
+              </section>
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )

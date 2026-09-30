@@ -1,0 +1,303 @@
+{
+  "method": "Production clone and direct scan task; isolated SQLite; AI disabled; concurrent analyzer wall times overlap. No repository code was executed. Timings are one-run measurements, not an SLA.",
+  "verification": {
+    "backend_tests_passed": 56,
+    "frontend_production_build": "passed",
+    "git_diff_check": "passed"
+  },
+  "final_rules_runs": [
+    {
+      "ai": "disabled",
+      "analyzer_versions": {
+        "radon": "6.0.1",
+        "vulture": "2.16"
+      },
+      "analyzers": {
+        "complexity": {
+          "findings": 9,
+          "seconds": 1.609
+        },
+        "dead_code": {
+          "findings": 11,
+          "seconds": 2.515
+        },
+        "security": {
+          "findings": 1,
+          "seconds": 1.774
+        },
+        "style": {
+          "findings": 4,
+          "seconds": 1.737
+        }
+      },
+      "by_category": {
+        "complexity": 9,
+        "dead_code": 11,
+        "security": 1,
+        "style": 4
+      },
+      "by_severity": {
+        "high": 2,
+        "low": 16,
+        "medium": 7
+      },
+      "clone_seconds": 1.959,
+      "commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "findings": 25,
+      "health_score": 68,
+      "incomplete_findings": 0,
+      "python": "3.12.14",
+      "python_files": 37,
+      "repository": "https://github.com/psf/requests",
+      "score_breakdown": {
+        "counts": {
+          "high": 2,
+          "low": 16,
+          "medium": 7
+        },
+        "penalties": {
+          "critical": 0.0,
+          "high": 9.285714285714281,
+          "info": 2.999881193615873,
+          "low": 6.851601914106844,
+          "medium": 12.986734079999998
+        },
+        "score": 68,
+        "threshold_counts": {
+          "critical": 0,
+          "high": 2,
+          "info": 25,
+          "low": 25,
+          "medium": 9
+        },
+        "version": "2"
+      },
+      "source_bytes": 407127,
+      "stage": "complete",
+      "stages": [
+        {
+          "estimate": null,
+          "stage": "static_analysis"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "ai_review"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "finalization"
+        }
+      ],
+      "static_seconds": 2.536,
+      "status": "completed",
+      "tested_at": "2026-09-29T13:24:12.519729+00:00",
+      "total_seconds": 4.64
+    },
+    {
+      "ai": "disabled",
+      "analyzer_versions": {
+        "radon": "6.0.1",
+        "vulture": "2.16"
+      },
+      "analyzers": {
+        "complexity": {
+          "findings": 204,
+          "seconds": 89.25
+        },
+        "dead_code": {
+          "findings": 95,
+          "seconds": 131.933
+        },
+        "security": {
+          "findings": 42,
+          "seconds": 89.87
+        },
+        "style": {
+          "findings": 78,
+          "seconds": 89.221
+        }
+      },
+      "by_category": {
+        "complexity": 204,
+        "dead_code": 95,
+        "security": 42,
+        "style": 78
+      },
+      "by_severity": {
+        "high": 147,
+        "low": 174,
+        "medium": 98
+      },
+      "clone_seconds": 7.669,
+      "commit": "9332b163a67eabe5bdbf8066b1c5da394be9aa9c",
+      "findings": 419,
+      "health_score": 40,
+      "incomplete_findings": 0,
+      "python": "3.12.14",
+      "python_files": 2932,
+      "repository": "https://github.com/django/django",
+      "score_breakdown": {
+        "counts": {
+          "high": 147,
+          "low": 174,
+          "medium": 98
+        },
+        "penalties": {
+          "critical": 0.0,
+          "high": 34.99999999495466,
+          "info": 3.0,
+          "low": 7.0,
+          "medium": 15.0
+        },
+        "score": 40,
+        "threshold_counts": {
+          "critical": 0,
+          "high": 147,
+          "info": 419,
+          "low": 419,
+          "medium": 245
+        },
+        "version": "2"
+      },
+      "source_bytes": 19413839,
+      "stage": "complete",
+      "stages": [
+        {
+          "estimate": null,
+          "stage": "static_analysis"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "ai_review"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "finalization"
+        }
+      ],
+      "static_seconds": 132.187,
+      "status": "completed",
+      "tested_at": "2026-09-29T13:27:29.858461+00:00",
+      "total_seconds": 140.681
+    }
+  ],
+  "additional_redamon_checks": {
+    "earlier_audit_run_before_final_report_refinements": {
+      "ai": "disabled",
+      "analyzer_versions": {
+        "radon": "6.0.1",
+        "vulture": "2.16"
+      },
+      "analyzers": {
+        "complexity": {
+          "findings": 539,
+          "seconds": 45.159
+        },
+        "dead_code": {
+          "findings": 67,
+          "seconds": 96.005
+        },
+        "security": {
+          "findings": 6,
+          "seconds": 46.891
+        },
+        "style": {
+          "findings": 84,
+          "seconds": 45.018
+        }
+      },
+      "by_category": {
+        "complexity": 539,
+        "dead_code": 67,
+        "security": 6,
+        "style": 84
+      },
+      "by_severity": {
+        "high": 345,
+        "low": 150,
+        "medium": 201
+      },
+      "clone_seconds": 108.203,
+      "commit": "dbef36cb2441284595ce033de6308ea1249480a3",
+      "findings": 696,
+      "health_score": 40,
+      "incomplete_findings": 0,
+      "python": "3.12.14",
+      "python_files": 1077,
+      "repository": "https://github.com/samugit83/redamon",
+      "score_breakdown": {
+        "counts": {
+          "high": 345,
+          "low": 150,
+          "medium": 201
+        },
+        "penalties": {
+          "critical": 0.0,
+          "high": 35.0,
+          "info": 3.0,
+          "low": 7.0,
+          "medium": 15.0
+        },
+        "score": 40,
+        "threshold_counts": {
+          "critical": 0,
+          "high": 345,
+          "info": 696,
+          "low": 696,
+          "medium": 546
+        },
+        "version": "2"
+      },
+      "source_bytes": 16772027,
+      "stage": "complete",
+      "stages": [
+        {
+          "estimate": null,
+          "stage": "static_analysis"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "ai_review"
+        },
+        {
+          "estimate": [
+            2,
+            10
+          ],
+          "stage": "finalization"
+        }
+      ],
+      "static_seconds": 96.286,
+      "status": "completed",
+      "tested_at": "2026-09-29T13:20:01.033638+00:00",
+      "total_seconds": 205.11
+    },
+    "latest_attempt": {
+      "status": "failed",
+      "stage": "repository_preparation",
+      "seconds": 120.41,
+      "reason": "Existing 120-second clone timeout; analysis never began."
+    }
+  },
+  "limitations": [
+    "Live AI was not called; provider failure and invalid response paths were simulated in tests.",
+    "Direct task invocation does not exercise Redis delivery or a real Celery hard kill.",
+    "Django includes an intentional invalid-syntax test fixture that was skipped.",
+    "Low-confidence dead-code candidates are intentionally omitted; static rules do not prove exploitability."
+  ]
+}

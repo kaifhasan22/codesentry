@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: codesentry
       POSTGRES_PASSWORD: codesentry
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -18,21 +18,23 @@ services:
   redis:
     image: redis:8-alpine
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
 
   api:
     build: ./backend
     environment:
       DATABASE_URL: postgresql+psycopg://codesentry:codesentry@postgres:5432/codesentry
       REDIS_URL: redis://redis:6379/0
-      JWT_SECRET: change-me-in-production
+      JWT_SECRET: ${JWT_SECRET:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       ALLOWED_GITHUB_HOSTS: github.com,www.github.com
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}
     volumes:
       - scan_work:/tmp/codesentry
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,7 +47,9 @@ services:
     environment:
       DATABASE_URL: postgresql+psycopg://codesentry:codesentry@postgres:5432/codesentry
       REDIS_URL: redis://redis:6379/0
-      JWT_SECRET: change-me-in-production
+      JWT_SECRET: ${JWT_SECRET:-}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173}
       ALLOWED_GITHUB_HOSTS: github.com,www.github.com
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       ANTHROPIC_MODEL: ${ANTHROPIC_MODEL:-claude-sonnet-5}

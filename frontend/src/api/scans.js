@@ -13,6 +13,11 @@ export async function getScan(scanId) {
   return data
 }
 
+export async function getScanComparison(scanId) {
+  const { data } = await client.get(`/api/scans/${scanId}/comparison`)
+  return data
+}
+
 export async function listScans() {
   const page = await listScansPage()
   return Array.isArray(page) ? page : page.items

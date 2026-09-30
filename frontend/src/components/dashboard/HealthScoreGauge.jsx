@@ -1,9 +1,7 @@
-import { cn } from '../../lib/utils'
-
 function scoreColor(score) {
-  if (score >= 80) return '#3FBF7F' // healthy
-  if (score >= 50) return '#E8A33D' // beacon amber - needs attention
-  return '#E5484D' // critical
+  if (score >= 80) return '#36b987'
+  if (score >= 50) return '#e8bd4d'
+  return '#e53030'
 }
 
 function scoreLabel(score) {
@@ -12,44 +10,16 @@ function scoreLabel(score) {
   return 'At risk'
 }
 
-export function HealthScoreGauge({ score = 0, size = 140, strokeWidth = 10, className }) {
-  const clamped = Math.max(0, Math.min(100, score))
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  const offset = circumference * (1 - clamped / 100)
-  const color = scoreColor(clamped)
-
+export function HealthScoreGauge({ score = 0, size = 160 }) {
+  const value = Math.max(0, Math.min(100, Number(score) || 0))
+  const color = scoreColor(value)
   return (
-    <div className={cn('flex flex-col items-center', className)}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="#262E42"
-          strokeWidth={strokeWidth}
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke={color}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{ transition: 'stroke-dashoffset 0.6s ease' }}
-        />
-      </svg>
-      <div className="flex flex-col items-center" style={{ marginTop: -(size / 2 + 20) }}>
-        <span className="font-display font-semibold text-3xl text-ink-100">{Math.round(clamped)}</span>
-        <span className="text-xs text-ink-500">/ 100</span>
+    <div style={{ display: 'grid', width: size, height: size, placeItems: 'center', borderRadius: '50%', background: 'conic-gradient(' + color + ' ' + value + '%, rgb(var(--base-700)) 0)' }}>
+      <div style={{ display: 'flex', width: size - 24, height: size - 24, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', background: 'rgb(var(--base-900))' }}>
+        <strong style={{ color: 'rgb(var(--ink-100))', fontSize: 36, lineHeight: 1 }}>{Math.round(value)}</strong>
+        <span style={{ marginTop: 7, color: 'rgb(var(--ink-500))', fontSize: 11 }}>/ 100</span>
+        <span style={{ marginTop: 9, color, fontSize: 11, fontWeight: 700 }}>{scoreLabel(value)}</span>
       </div>
-      <span className="text-xs font-medium mt-2" style={{ color }}>
-        {scoreLabel(clamped)}
-      </span>
     </div>
   )
 }

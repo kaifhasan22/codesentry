@@ -1,0 +1,61 @@
+{
+  "method": "Fresh authenticated HTTP scans through dedicated Redis and real Celery prefork worker. Empty isolated SQLite database; AI disabled.",
+  "runs": [
+    {
+      "repository": "https://github.com/psf/requests",
+      "scan_id": 3,
+      "status": "completed",
+      "observed_stages": [
+        "repository_preparation",
+        "static_analysis",
+        "complete"
+      ],
+      "elapsed_seconds": 5.43,
+      "source_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "score": 68,
+      "finding_count": 25,
+      "severity_counts": {
+        "high": 2,
+        "medium": 7,
+        "low": 16
+      },
+      "category_counts": {
+        "complexity": 9,
+        "dead_code": 11,
+        "style": 4,
+        "security": 1
+      },
+      "error_message": null,
+      "owner_isolation": "passed"
+    },
+    {
+      "repository": "https://github.com/psf/codesentry-nonexistent-security-aa7e2e09a75b2025",
+      "scan_id": 4,
+      "status": "failed",
+      "observed_stages": [
+        "repository_preparation",
+        "failed"
+      ],
+      "elapsed_seconds": 1.17,
+      "source_commit": null,
+      "score": null,
+      "finding_count": 0,
+      "severity_counts": {},
+      "category_counts": {},
+      "error_message": "Repository preparation failed. Check that the public GitHub repository exists and is accessible.",
+      "owner_isolation": "passed"
+    }
+  ],
+  "remaining_workspaces": [],
+  "timings_seconds": {
+    "clone": 2.87,
+    "complexity": 1.18,
+    "security": 1.17,
+    "dead_code": 1.57,
+    "style": 1.18,
+    "static_analysis_total": 1.94,
+    "ai_review": 0.0,
+    "persistence": 0.02,
+    "worker_total_before_cleanup": 4.89
+  }
+}

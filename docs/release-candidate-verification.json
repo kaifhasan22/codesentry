@@ -1,0 +1,809 @@
+{
+  "date": "2026-09-30",
+  "environment": "isolated release stack: production Vite preview, FastAPI, Redis 8, Celery prefork concurrency 2, PostgreSQL 17",
+  "automated_tests": {
+    "backend_passed": 93,
+    "backend_warnings": 2,
+    "backend_command": "python -m pytest -q",
+    "frontend_passed": 7,
+    "frontend_command": "node --test tests/*.test.js"
+  },
+  "first_frontend_scan": {
+    "scenario": "Genuine frontend submission to built API, Redis, Celery prefork, PostgreSQL and report",
+    "scan_id": 1,
+    "transitions": [
+      {
+        "status": "queued",
+        "stage": "queued"
+      },
+      {
+        "status": "running",
+        "stage": "repository_preparation",
+        "estimated_min_seconds": null,
+        "estimated_max_seconds": null
+      },
+      {
+        "status": "running",
+        "stage": "static_analysis",
+        "estimated_min_seconds": 2,
+        "estimated_max_seconds": 20
+      },
+      {
+        "status": "running",
+        "stage": "finalization",
+        "estimated_min_seconds": 2,
+        "estimated_max_seconds": 10
+      },
+      {
+        "status": "completed",
+        "stage": "complete",
+        "estimated_min_seconds": 0,
+        "estimated_max_seconds": 0
+      }
+    ],
+    "elapsed_seconds": 7.84
+  },
+  "initial_api_checks": {
+    "health": "passed",
+    "registration": "passed",
+    "duplicate_registration": "409",
+    "infrastructure": "PostgreSQL 17, Redis 8, built application image; worker not started yet."
+  },
+  "api_regression": {
+    "checks": {
+      "incorrect_credentials": "401",
+      "protected_and_invalid_tokens": "passed",
+      "unsupported_urls": "7 rejected with 422",
+      "active_scan_limit": "two queued owner scans accepted; third rejected with 429; other user accepted",
+      "real_jwt_owner_isolation": "passed",
+      "unrelated_repository_comparison": "no baseline",
+      "failed_clone": "terminal failed with fixed public error",
+      "history_counts_metadata": "passed"
+    },
+    "runs": [
+      {
+        "scan_id": 2,
+        "repository": "https://github.com/psf/requests",
+        "score": 68,
+        "finding_count": 25,
+        "source_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+        "stages_observed": [
+          "queued",
+          "repository_preparation",
+          "static_analysis",
+          "finalization",
+          "complete"
+        ],
+        "comparison": {
+          "available": true,
+          "reason": null,
+          "baseline_scan_id": 1,
+          "baseline_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+          "current_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+          "identity_mode": "structural-v1",
+          "warnings": [],
+          "score_delta": 0,
+          "total_delta": 0,
+          "severity_delta": {
+            "critical": 0,
+            "high": 0,
+            "medium": 0,
+            "low": 0,
+            "info": 0
+          },
+          "new_issue_ids": [],
+          "unchanged_issue_ids": [
+            51,
+            52,
+            53,
+            54,
+            55,
+            56,
+            57,
+            58,
+            59,
+            60,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            67,
+            68,
+            69,
+            70,
+            71,
+            72,
+            73,
+            74,
+            75
+          ],
+          "resolved_issues": [],
+          "new_count": 0,
+          "resolved_count": 0,
+          "unchanged_count": 25
+        }
+      },
+      {
+        "scan_id": 3,
+        "repository": "https://github.com/psf/requests",
+        "score": 68,
+        "finding_count": 25,
+        "source_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+        "stages_observed": [
+          "complete"
+        ],
+        "comparison": {
+          "available": true,
+          "reason": null,
+          "baseline_scan_id": 2,
+          "baseline_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+          "current_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+          "identity_mode": "structural-v1",
+          "warnings": [],
+          "score_delta": 0,
+          "total_delta": 0,
+          "severity_delta": {
+            "critical": 0,
+            "high": 0,
+            "medium": 0,
+            "low": 0,
+            "info": 0
+          },
+          "new_issue_ids": [],
+          "unchanged_issue_ids": [
+            26,
+            27,
+            28,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42,
+            43,
+            44,
+            45,
+            46,
+            47,
+            48,
+            49,
+            50
+          ],
+          "resolved_issues": [],
+          "new_count": 0,
+          "resolved_count": 0,
+          "unchanged_count": 25
+        }
+      },
+      {
+        "scan_id": 4,
+        "repository": "https://github.com/pallets/itsdangerous",
+        "score": 94,
+        "finding_count": 4,
+        "source_commit": "672971d66a2ef9f85151e53283113f33d642dabd",
+        "stages_observed": [
+          "repository_preparation",
+          "static_analysis",
+          "complete"
+        ],
+        "comparison": {
+          "available": false,
+          "reason": "No previous completed scan of this repository is available.",
+          "baseline_scan_id": null,
+          "baseline_commit": null,
+          "current_commit": null,
+          "identity_mode": null,
+          "warnings": [],
+          "score_delta": null,
+          "total_delta": null,
+          "severity_delta": {},
+          "new_issue_ids": [],
+          "unchanged_issue_ids": [],
+          "resolved_issues": [],
+          "new_count": 0,
+          "resolved_count": 0,
+          "unchanged_count": 0
+        }
+      },
+      {
+        "scan_id": 5,
+        "repository": "https://github.com/pallets/itsdangerous",
+        "score": 94,
+        "finding_count": 4,
+        "comparison": {
+          "available": false,
+          "reason": "No previous completed scan of this repository is available.",
+          "baseline_scan_id": null,
+          "baseline_commit": null,
+          "current_commit": null,
+          "identity_mode": null,
+          "warnings": [],
+          "score_delta": null,
+          "total_delta": null,
+          "severity_delta": {},
+          "new_issue_ids": [],
+          "unchanged_issue_ids": [],
+          "resolved_issues": [],
+          "new_count": 0,
+          "resolved_count": 0,
+          "unchanged_count": 0
+        }
+      },
+      {
+        "scan_id": 6,
+        "repository": "https://github.com/psf/codesentry-rc-nonexistent-39f2d6b9",
+        "status": "failed",
+        "error_message": "Repository preparation failed. Check that the public GitHub repository exists and is accessible."
+      }
+    ],
+    "same_commit_scan_ids": [
+      1,
+      2,
+      3
+    ],
+    "other_owner_scan_id": 4,
+    "failure_id": 6,
+    "unrelated_id": 5
+  },
+  "persistence": {
+    "dialect": "postgresql",
+    "scan_count": 6,
+    "workspaces": [],
+    "duplicate_task_protection": "2 duplicate Redis deliveries; no rerun or duplicate findings",
+    "postgresql_and_api_restart": "all history rows and original repository metadata preserved"
+  },
+  "ai_provider_unavailable": {
+    "scan_id": 7,
+    "provider": "unreachable loopback endpoint; dummy test credential",
+    "stages": [
+      {
+        "status": "queued",
+        "stage": "queued",
+        "estimated_min_seconds": null,
+        "estimated_max_seconds": null
+      },
+      {
+        "status": "running",
+        "stage": "repository_preparation",
+        "estimated_min_seconds": null,
+        "estimated_max_seconds": null
+      },
+      {
+        "status": "running",
+        "stage": "static_analysis",
+        "estimated_min_seconds": null,
+        "estimated_max_seconds": null
+      },
+      {
+        "status": "running",
+        "stage": "static_analysis",
+        "estimated_min_seconds": 2,
+        "estimated_max_seconds": 64
+      },
+      {
+        "status": "running",
+        "stage": "ai_review",
+        "estimated_min_seconds": 11,
+        "estimated_max_seconds": 55
+      },
+      {
+        "status": "running",
+        "stage": "finalization",
+        "estimated_min_seconds": 2,
+        "estimated_max_seconds": 10
+      },
+      {
+        "status": "completed",
+        "stage": "complete",
+        "estimated_min_seconds": 0,
+        "estimated_max_seconds": 0
+      }
+    ],
+    "score": 68,
+    "findings": 25,
+    "severity_counts": {
+      "high": 2,
+      "medium": 7,
+      "low": 16
+    },
+    "category_counts": {
+      "complexity": 9,
+      "dead_code": 11,
+      "style": 4,
+      "security": 1
+    },
+    "comparison": {
+      "available": true,
+      "reason": null,
+      "baseline_scan_id": 3,
+      "baseline_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "current_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "identity_mode": "structural-v1",
+      "warnings": [],
+      "score_delta": 0,
+      "total_delta": 0,
+      "severity_delta": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0
+      },
+      "new_issue_ids": [],
+      "unchanged_issue_ids": [
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "resolved_issues": [],
+      "new_count": 0,
+      "resolved_count": 0,
+      "unchanged_count": 25
+    }
+  },
+  "controlled_source_comparison": [
+    {
+      "scan_id": 8,
+      "source": "real Requests clone + explicitly labeled local eval fixture",
+      "score": 64,
+      "finding_count": 26,
+      "comparison": {
+        "available": true,
+        "reason": null,
+        "baseline_scan_id": 7,
+        "baseline_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+        "current_commit": null,
+        "identity_mode": "structural-v1",
+        "warnings": [],
+        "score_delta": -4,
+        "total_delta": 1,
+        "severity_delta": {
+          "critical": 0,
+          "high": 1,
+          "medium": 0,
+          "low": 0,
+          "info": 0
+        },
+        "new_issue_ids": [
+          109
+        ],
+        "unchanged_issue_ids": [
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121,
+          122,
+          123,
+          124,
+          125,
+          126,
+          127,
+          128,
+          129,
+          130,
+          131,
+          132,
+          133,
+          134
+        ],
+        "resolved_issues": [],
+        "new_count": 1,
+        "resolved_count": 0,
+        "unchanged_count": 25
+      }
+    },
+    {
+      "scan_id": 9,
+      "source": "unmodified real Requests clone; fixture removed",
+      "score": 68,
+      "finding_count": 25,
+      "comparison": {
+        "available": true,
+        "reason": null,
+        "baseline_scan_id": 8,
+        "baseline_commit": null,
+        "current_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+        "identity_mode": "structural-v1",
+        "warnings": [],
+        "score_delta": 4,
+        "total_delta": -1,
+        "severity_delta": {
+          "critical": 0,
+          "high": -1,
+          "medium": 0,
+          "low": 0,
+          "info": 0
+        },
+        "new_issue_ids": [],
+        "unchanged_issue_ids": [
+          135,
+          136,
+          137,
+          138,
+          139,
+          140,
+          141,
+          142,
+          143,
+          144,
+          145,
+          146,
+          147,
+          148,
+          149,
+          150,
+          151,
+          152,
+          153,
+          154,
+          155,
+          156,
+          157,
+          158,
+          159
+        ],
+        "resolved_issues": [
+          {
+            "id": 109,
+            "category": "security",
+            "severity": "high",
+            "title": "Use of eval()",
+            "message": "AST analysis found eval() with a non-literal input. If that input is attacker-controlled, it can execute Python code; input trust is not established by this rule.",
+            "file_path": "codesentry_rc_fixture.py",
+            "line": 3,
+            "snippet": "   1 | # Release verification fixture, never executed.\n   2 | def rc_dispatch(value):\n   3 |     return eval(value)",
+            "ai_explanation": null,
+            "fix_suggestion": "Replace dynamic execution with explicit operations or a dispatch table. For literal data, use json.loads or ast.literal_eval with input-size limits; do not pass untrusted text to eval/exec.",
+            "priority": "p2",
+            "priority_score": 60,
+            "priority_reasons": [
+              "High analyzer severity: 45 points",
+              "Security review relevance: +15"
+            ]
+          }
+        ],
+        "new_count": 0,
+        "resolved_count": 1,
+        "unchanged_count": 25
+      }
+    }
+  ],
+  "failure_regression": {
+    "worker_termination": {
+      "scan_id": 12,
+      "states": [
+        "queued",
+        "running",
+        "failed"
+      ],
+      "status": "failed",
+      "error": "The scan worker stopped unexpectedly before results were saved.",
+      "workspace_cleanup": "passed"
+    },
+    "abandoned_fixture_recovery": {
+      "running_id": 11,
+      "queued_id": 13,
+      "running_error": "The scan worker did not finish within its 300-second limit. The scan was marked failed instead of remaining in progress.",
+      "queued_error": "The scan did not start within 15 minutes and was marked failed. Please retry.",
+      "workspace_cleanup": "passed"
+    }
+  },
+  "outage_and_parameters": {
+    "queue_failure": "Scan could not be queued. Please retry.",
+    "invalid_parameter_results": {
+      "/api/scans?limit=-1": 422,
+      "/api/scans?offset=-1": 422,
+      "/api/scans?status=invalid": 422,
+      "/api/scans/0": 422,
+      "/api/scans/-1": 422,
+      "/api/scans/2147483648": 422
+    }
+  },
+  "final_frontend_scan": {
+    "scan_id": 15,
+    "source": "genuine frontend submission after final backend fix, normal unmodified worker",
+    "status": "completed",
+    "score": 68,
+    "source_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+    "finding_count": 25,
+    "severity_counts": {
+      "high": 2,
+      "medium": 7,
+      "low": 16
+    },
+    "category_counts": {
+      "complexity": 9,
+      "dead_code": 11,
+      "style": 4,
+      "security": 1
+    },
+    "stages_observed": [
+      {
+        "status": "completed",
+        "stage": "complete",
+        "estimated_min_seconds": 0,
+        "estimated_max_seconds": 0
+      }
+    ],
+    "comparison": {
+      "available": true,
+      "reason": null,
+      "baseline_scan_id": 9,
+      "baseline_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "current_commit": "611c6162cbc4ac2020a2f91c7cfa4f3abf9bbb60",
+      "identity_mode": "structural-v1",
+      "warnings": [],
+      "score_delta": 0,
+      "total_delta": 0,
+      "severity_delta": {
+        "critical": 0,
+        "high": 0,
+        "medium": 0,
+        "low": 0,
+        "info": 0
+      },
+      "new_issue_ids": [],
+      "unchanged_issue_ids": [
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185
+      ],
+      "resolved_issues": [],
+      "new_count": 0,
+      "resolved_count": 0,
+      "unchanged_count": 25
+    },
+    "top_issue_ids": [
+      161,
+      162,
+      163,
+      164,
+      165
+    ],
+    "hotspots": [
+      {
+        "file_path": "src/requests/models.py",
+        "finding_count": 5,
+        "severity_counts": {
+          "critical": 0,
+          "high": 1,
+          "medium": 2,
+          "low": 2,
+          "info": 0
+        },
+        "weight": 14.5
+      },
+      {
+        "file_path": "src/requests/utils.py",
+        "finding_count": 3,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 3,
+          "low": 0,
+          "info": 0
+        },
+        "weight": 9.0
+      },
+      {
+        "file_path": "src/requests/adapters.py",
+        "finding_count": 1,
+        "severity_counts": {
+          "critical": 0,
+          "high": 1,
+          "medium": 0,
+          "low": 0,
+          "info": 0
+        },
+        "weight": 8.0
+      },
+      {
+        "file_path": "src/requests/sessions.py",
+        "finding_count": 3,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 1,
+          "low": 2,
+          "info": 0
+        },
+        "weight": 3.5
+      },
+      {
+        "file_path": "src/requests/auth.py",
+        "finding_count": 1,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 1,
+          "low": 0,
+          "info": 0
+        },
+        "weight": 3.0
+      },
+      {
+        "file_path": "tests/test_utils.py",
+        "finding_count": 5,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 5,
+          "info": 0
+        },
+        "weight": 1.25
+      },
+      {
+        "file_path": "src/requests/compat.py",
+        "finding_count": 3,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 3,
+          "info": 0
+        },
+        "weight": 0.75
+      },
+      {
+        "file_path": "tests/test_requests.py",
+        "finding_count": 2,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 2,
+          "info": 0
+        },
+        "weight": 0.5
+      },
+      {
+        "file_path": "tests/testserver/server.py",
+        "finding_count": 2,
+        "severity_counts": {
+          "critical": 0,
+          "high": 0,
+          "medium": 0,
+          "low": 2,
+          "info": 0
+        },
+        "weight": 0.5
+      }
+    ],
+    "worker_timings": [
+      "worker-1  | [2026-09-30 17:00:52,429: INFO/ForkPoolWorker-2] Scan 15 stage=clone elapsed=2.76s",
+      "worker-1  | [2026-09-30 17:00:53,956: INFO/ForkPoolWorker-2] Analyzer app.analyzers.complexity completed in 1.50s with 9 findings",
+      "worker-1  | [2026-09-30 17:00:53,991: INFO/ForkPoolWorker-2] Analyzer app.analyzers.security completed in 1.53s with 1 findings",
+      "worker-1  | [2026-09-30 17:00:54,073: INFO/ForkPoolWorker-2] Analyzer app.analyzers.style completed in 1.61s with 4 findings",
+      "worker-1  | [2026-09-30 17:00:54,733: INFO/ForkPoolWorker-2] Analyzer app.analyzers.dead_code completed in 2.27s with 11 findings",
+      "worker-1  | [2026-09-30 17:00:55,119: INFO/ForkPoolWorker-2] Scan 15 stage=static_analysis elapsed=2.68s findings=25",
+      "worker-1  | [2026-09-30 17:00:55,127: INFO/ForkPoolWorker-2] Scan 15 stage=ai_review elapsed=0.00s reviews=0",
+      "worker-1  | [2026-09-30 17:00:55,177: INFO/ForkPoolWorker-2] Scan 15 stage=persist elapsed=0.04s issues=25",
+      "worker-1  | [2026-09-30 17:00:55,177: INFO/ForkPoolWorker-2] Scan 15 completed elapsed=5.82s"
+    ],
+    "workspace_cleanup": "passed"
+  },
+  "rendering_fixtures": {
+    "zero_legacy_id": 10,
+    "active_fixture_id": 11
+  },
+  "postgresql_id_fix_verified": {
+    "scan_id_2147483648_detail_and_comparison": 422,
+    "scan_id_2147483647_detail_and_comparison": 404,
+    "signed_jwt_subject_2147483648": 401
+  },
+  "browser_observations": {
+    "routes_direct_and_refresh": [
+      "/",
+      "/login",
+      "/dashboard",
+      "/scans/new",
+      "/scans",
+      "/scans/15"
+    ],
+    "viewport_dimensions": [
+      [
+        375,
+        812
+      ],
+      [
+        768,
+        1024
+      ],
+      [
+        1440,
+        900
+      ]
+    ],
+    "report_page_widths": [
+      375,
+      768,
+      1440
+    ],
+    "mobile_major_routes_no_document_overflow": true,
+    "final_report_console_errors_or_warnings": [],
+    "combined_hotspot_search_severity_category_matching": 2,
+    "unchanged_medium_complexity": 7,
+    "unchanged_medium_complexity_prepare_search": 2,
+    "reset_findings": 25,
+    "new_fixture_search_severity_category": 1,
+    "resolved_fixture_details_baseline_scan": 8,
+    "expired_invalid_tokens_redirect_to_login": true,
+    "logout_blocks_protected_route": true,
+    "cross_user_history_only_own_and_direct_scan_not_found": true,
+    "history_api_outage_retry_recovered": true,
+    "issue_drawer_expand_restore_close_scroll_lock": true
+  },
+  "production_build": {
+    "passed": true,
+    "modules": 1432,
+    "seconds": 5.61,
+    "javascript_kb": 264.38,
+    "javascript_gzip_kb": 87,
+    "css_kb": 30.39,
+    "css_gzip_kb": 6.95,
+    "warnings": []
+  }
+}

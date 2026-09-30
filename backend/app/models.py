@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
+from sqlalchemy import DateTime, ForeignKey, Integer, JSON, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -11,6 +11,16 @@ class ScanStatus(StrEnum):
     QUEUED = "queued"
     RUNNING = "running"
     COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class ScanStage(StrEnum):
+    QUEUED = "queued"
+    REPOSITORY_PREPARATION = "repository_preparation"
+    STATIC_ANALYSIS = "static_analysis"
+    AI_REVIEW = "ai_review"
+    FINALIZATION = "finalization"
+    COMPLETE = "complete"
     FAILED = "failed"
 
 
@@ -52,7 +62,12 @@ class Scan(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     repo_id: Mapped[int] = mapped_column(ForeignKey("repos.id", ondelete="CASCADE"), index=True)
     status: Mapped[str] = mapped_column(String(32), default=ScanStatus.QUEUED.value, index=True)
+    stage: Mapped[str] = mapped_column(String(32), default=ScanStage.QUEUED.value, server_default=ScanStage.QUEUED.value)
+    estimated_min_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    estimated_max_seconds: Mapped[int | None] = mapped_column(Integer, nullable=True)
     score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    analysis_version: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    source_commit: Mapped[str | None] = mapped_column(String(64), nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
@@ -68,6 +83,8 @@ class Issue(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     scan_id: Mapped[int] = mapped_column(ForeignKey("scans.id", ondelete="CASCADE"), index=True)
     fingerprint: Mapped[str] = mapped_column(String(64), index=True)
+    comparison_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    analyzer_metadata: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     category: Mapped[str] = mapped_column(String(64), index=True)
     severity: Mapped[str] = mapped_column(String(32), index=True)
     title: Mapped[str] = mapped_column(String(255))
