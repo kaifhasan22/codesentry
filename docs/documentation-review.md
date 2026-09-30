@@ -1,5 +1,7 @@
 # Documentation review and owner handoff — 2026-09-30
 
+**Follow-up — 1 October 2026:** The owner-requested MIT license and genuine portfolio screenshots are now complete. See the [license](../LICENSE) and [current screenshot gallery/provenance](screenshots/README.md). Other observations below preserve the original review context.
+
 ## Scope
 
 Portfolio documentation and repository-hygiene review after the release-candidate pass. Application functionality, API implementation, frontend design, analyzers, scoring, infrastructure values and scanner safeguards were not changed. No commits, pushes, deployments or regular-service restarts were performed.
@@ -50,11 +52,11 @@ GitHub documents Mermaid flowchart support; the diagram uses that syntax. Its ex
 
 ## Owner must supply or decide
 
-1. **Six genuine screenshots** at the planned `docs/screenshots/` filenames, then replace placeholder text with image links/captions. Preserve real scan/comparison results and label any controlled source variation.
+1. **Completed — 1 October 2026:** Nine genuine desktop screenshots are saved under `docs/screenshots/` and rendered by the root README. Real scan/comparison data and capture provenance are documented; no source variations or mockups were used.
 2. **Public GitHub repository URL** and correct clone instructions after choosing the publication destination; `git remote -v` returned no configured remote in this checkout.
 3. **Deployed demo URL**, only after an actual deployment and smoke test; configure public frontend API URL, HTTPS/CORS and SPA fallback. Do not add an invented demo link.
-4. **License choice** and any owner attribution before publishing. No license file is currently present; none was selected on the owner's behalf.
+4. **Completed — 1 October 2026:** Standard [MIT License](../LICENSE), copyright 2026 `kaifhasan22`, as requested by the owner and confirmed against the Git remote/author identity.
 5. **Private configuration:** generate the JWT signing key; supply provider API credentials/approved model only if AI is enabled. Keep these in ignored local configuration or production secret management, never the README/browser bundle.
 6. **Optional real-provider smoke test** and deployment-specific data-handling policy. Static fallback is tested; successful provider enrichment is not claimed.
 
-See the [root README](../README.md), [screenshot checklist](screenshots/README.md), [architecture](architecture.md) and [release report](release-candidate-report.md).
+See the [root README](../README.md), [screenshot gallery](screenshots/README.md), [architecture](architecture.md) and [release report](release-candidate-report.md).

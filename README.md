@@ -26,18 +26,60 @@ This portfolio project has a tested local release candidate. It is **not product
 
 ## Screenshots
 
-**Placeholders — owner captures are pending.** These are planned paths, not existing images or fabricated screenshots.
+Genuine captures of the local CodeSentry application on **1 October 2026**, using the existing dark theme at **1440 × 900**. Reports and comparison use real Requests scans; the progress view shows a real Django scan. No mockups or manufactured findings are used. [Capture notes and provenance](docs/screenshots/README.md).
 
-| Suggested capture | Planned location |
-| --- | --- |
-| Dashboard: repository, score and counts | `docs/screenshots/dashboard.png` |
-| Genuine scan progress: stage and approximate window | `docs/screenshots/scan-progress.png` |
-| Completed report and Top Issues | `docs/screenshots/completed-report.png` |
-| Issue details: evidence, snippet, priority reasons, fix | `docs/screenshots/issue-detail.png` |
-| Hotspot selection and composed filters | `docs/screenshots/hotspots-filtering.png` |
-| Comparison: baseline and genuine deltas | `docs/screenshots/scan-comparison.png` |
+### Landing
 
-[Capture checklist](docs/screenshots/README.md). Existing release screenshots remain engineering evidence, including labeled fixtures; they are not substituted for portfolio captures.
+![CodeSentry landing page with the existing branding and workspace entry](docs/screenshots/landing.jpg)
+
+<details>
+<summary>Sign-in and persistent scan history</summary>
+
+**Sign-in**
+
+![CodeSentry sign-in screen](docs/screenshots/login.jpg)
+
+**Scan history** — completed Requests and Django scans with saved scores and finding counts.
+
+![Real completed repository scans in CodeSentry history](docs/screenshots/scan-history.jpg)
+
+</details>
+
+<details>
+<summary>Repository submission and live progress / ETA</summary>
+
+**New scan** — submit a public Python GitHub repository.
+
+![CodeSentry repository submission for psf/requests](docs/screenshots/new-scan.jpg)
+
+**Live progress** — Django during static analysis, with an approximate workload-based completion window rather than a precise countdown.
+
+![A genuine running Django scan showing stages and approximate completion time](docs/screenshots/scan-progress.jpg)
+
+</details>
+
+### Completed report
+
+Requests: **68/100**, **25 findings**, compact Top Issues and severity-weighted file hotspots.
+
+![Completed Requests report showing health score, severity counts, Top Issues and file hotspots](docs/screenshots/completed-report.jpg)
+
+<details>
+<summary>Finding details, hotspot filtering and scan comparison</summary>
+
+**Finding detail** — expanded panel with the analyzer's explanation, exact location, snippet, priority reason and suggested fix. Optional AI was unavailable during this capture.
+
+![Expanded finding detail with original analyzer evidence and actionable fix](docs/screenshots/issue-detail.jpg)
+
+**Hotspot filtering** — select `src/requests/models.py`, search `prepare`, then apply Medium + Complexity: **2 of 25** findings match.
+
+![Hotspot selection combined with search, severity and category filters](docs/screenshots/hotspots-filtering.jpg)
+
+**Scan comparison** — consecutive scans of the same Requests commit: **0 new / 0 resolved / 25 unchanged**, with zero score and severity deltas.
+
+![Genuine same-commit comparison with zero new or resolved findings](docs/screenshots/scan-comparison.jpg)
+
+</details>
 
 ## Architecture
 
@@ -214,7 +256,7 @@ codesentry-starter/
 │   ├── src/pages/, components/, api/
 │   ├── tests/
 │   └── package-lock.json
-└── docs/                 # Decisions, evidence and screenshot placeholders
+└── docs/                 # Decisions, evidence and genuine UI screenshots
 ```
 
 ## API overview
@@ -243,7 +285,11 @@ Scan IDs are positive signed 32-bit integers. Unknown/other-owner scans return 4
 - Process-local auth throttling, localStorage tokens, no revocation/distributed global quotas.
 - Production work: HTTPS/secrets/private database/broker access, non-root worker isolation/hard quotas, periodic recovery, dependency review, monitoring and staging capacity/backup validation.
 
-These are deferred work, not implemented claims. The owner must supply a public repository URL, any deployed-demo URL, portfolio screenshots and a chosen license before publication; none is supplied here.
+These are deferred work, not implemented claims. Add a deployed-demo URL when a hosted demonstration is available; deployment prerequisites remain open. The MIT license and genuine portfolio screenshots are included in this repository.
+
+## License
+
+CodeSentry is licensed under the [MIT License](LICENSE). Copyright (c) 2026 kaifhasan22.
 
 ## Supporting documentation
 
@@ -252,7 +298,7 @@ These are deferred work, not implemented claims. The owner must supply a public 
 - [Priority, hotspots, filtering, comparison and migrations](docs/product-features.md)
 - [Security audit and production recommendations](docs/security-hardening.md)
 - [Release-candidate regression report](docs/release-candidate-report.md)
-- [Screenshot checklist](docs/screenshots/README.md)
+- [Screenshot gallery and capture notes](docs/screenshots/README.md)
 - [Documentation verification and owner handoff](docs/documentation-review.md)
 
 Older reports retain dated measurements/test counts; the release report records the current functional baseline.
