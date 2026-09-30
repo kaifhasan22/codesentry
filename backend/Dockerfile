@@ -7,7 +7,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends git ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
@@ -17,4 +17,7 @@ COPY app ./app
 COPY tests ./tests
 COPY pytest.ini ./pytest.ini
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 8000
+
+# exec forwards container termination signals to Uvicorn; no development reload.
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port \"${PORT:-8000}\""]

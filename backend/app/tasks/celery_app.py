@@ -1,3 +1,5 @@
+import ssl
+
 from celery import Celery
 
 from app.config import get_settings
@@ -21,5 +23,10 @@ celery_app.conf.update(
     worker_max_tasks_per_child=20,
     worker_prefetch_multiplier=1,
 )
+
+# Hosted Redis URLs use TLS. Plain redis:// keeps the local Compose settings.
+if settings.redis_url.startswith("rediss://"):
+    tls = {"ssl_cert_reqs": ssl.CERT_REQUIRED, "ssl_check_hostname": True}
+    celery_app.conf.update(broker_use_ssl=tls, redis_backend_use_ssl=tls.copy())
 
 celery_app.conf.imports = ("app.tasks.scan",)

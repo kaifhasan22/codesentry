@@ -1,6 +1,7 @@
 import axios from 'axios'
+import { resolveApiBaseUrl } from './baseUrl.js'
 
-const BASE_URL = import.meta.env?.VITE_API_URL || 'http://localhost:8000'
+const BASE_URL = resolveApiBaseUrl(import.meta.env)
 
 export const client = axios.create({
   baseURL: BASE_URL,

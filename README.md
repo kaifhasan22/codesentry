@@ -146,6 +146,10 @@ These historical benchmarks invoked tasks directly, without broker delivery. [Re
 
 The subsequent release-candidate pass verified **frontend → API → Redis → Celery → PostgreSQL → results**: Requests yielded 25 findings, score 68 and **5.82 s** worker processing. Identical scans showed **0 new / 0 resolved / 25 unchanged**; a separately labeled temporary source change verified new/resolved detection without manufacturing results.
 
+## Azure deployment preparation
+
+The intended Azure mapping and compatibility settings are documented in [Azure deployment preparation](docs/azure-deployment.md). No cloud resources have been created or deployed. The same backend image remains compatible with local Compose.
+
 ## Local development
 
 ### Prerequisites
@@ -192,7 +196,7 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
 ```
 
-The browser API defaults to `http://localhost:8000`. For another API, set `VITE_API_URL` in ignored `frontend/.env.local`, restart Vite and configure backend CORS for the exact frontend origin. `VITE_` variables are public; never place provider/signing secrets there.
+The browser API defaults to `http://localhost:8000`. For another API, set `VITE_API_BASE_URL` (or the existing `VITE_API_URL` alias) in ignored `frontend/.env.local`, restart Vite and configure backend CORS for the exact frontend origin. `VITE_` variables are public; never place provider/signing secrets there.
 
 ### 4. First scan
 
@@ -221,7 +225,7 @@ npm run build
 
 `npm test` uses the existing Node.js built-in test runner; no additional framework is required. Do not append Vitest's `--run` flag.
 
-Verified baseline: **93 backend tests, 7 frontend tests**, production build and genuine PostgreSQL E2E. The [release report](docs/release-candidate-report.md) covers auth, isolation, failures/cleanup, comparison and responsive/refresh behavior; production load, successful live AI and a real 300-second deadline remain unverified.
+Release-candidate baseline: **93 backend tests, 7 frontend tests**, production build and genuine PostgreSQL E2E. The subsequent [Azure compatibility pass](docs/azure-deployment.md#local-verification-results--1-october-2026) passes **96 backend / 9 frontend tests**, including focused connection/configuration regressions. The [release report](docs/release-candidate-report.md) covers auth, isolation, failures/cleanup, comparison and responsive/refresh behavior; production load, successful live AI and a real 300-second deadline remain unverified.
 
 ### Rebuild and shutdown
 
@@ -293,6 +297,7 @@ CodeSentry is licensed under the [MIT License](LICENSE). Copyright (c) 2026 kaif
 
 ## Supporting documentation
 
+- [Azure deployment preparation](docs/azure-deployment.md)
 - [Architecture and technical decisions](docs/architecture.md)
 - [Analysis rules, score formula and benchmarks](docs/analysis-quality.md)
 - [Priority, hotspots, filtering, comparison and migrations](docs/product-features.md)
