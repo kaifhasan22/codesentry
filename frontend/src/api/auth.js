@@ -1,4 +1,4 @@
-import { client, setToken, clearToken } from './client'
+import { client, setToken, clearToken } from './client.js'
 
 // Confirmed against /openapi.json: POST /api/auth/login is an OAuth2
 // password-flow endpoint (FastAPI's OAuth2PasswordRequestForm), so the
@@ -19,4 +19,10 @@ export async function login(email, password) {
 
 export function logout() {
   clearToken()
+}
+
+// Registration returns a token, but signup deliberately proceeds to Sign In.
+export async function register(email, password) {
+  const { data } = await client.post('/api/auth/register', { email: email.trim(), password })
+  return data
 }

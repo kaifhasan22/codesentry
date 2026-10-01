@@ -9,6 +9,18 @@ class RegisterRequest(BaseModel):
     email: EmailStr
     password: str = Field(min_length=8, max_length=128)
 
+    @field_validator("email", mode="before")
+    @classmethod
+    def normalize_email(cls, value):
+        return value.strip().lower() if isinstance(value, str) else value
+
+    @field_validator("password")
+    @classmethod
+    def reject_blank_password(cls, value):
+        if not value.strip():
+            raise ValueError("Password must not be blank")
+        return value
+
 
 class LoginRequest(RegisterRequest):
     pass

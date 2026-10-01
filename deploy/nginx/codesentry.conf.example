@@ -1,0 +1,39 @@
+# REVIEW TEMPLATE ONLY: integrate with existing Nginx configuration.
+# Assumes Nginx runs on the Lightsail host and API is bound to 127.0.0.1:8000.
+# Confirm upstream binding, certificate paths, and current domain ownership first.
+server {
+    listen 80;
+    server_name codesentry.tech;
+    return 301 https://codesentry.tech$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name codesentry.tech;
+    ssl_certificate /etc/letsencrypt/live/codesentry.tech/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/codesentry.tech/privkey.pem;
+    root /var/www/codesentry/current;
+    index index.html;
+
+    location = /api { return 308 /api/; }
+    location ^~ /api/ {
+        # No trailing slash: preserve /api/... for FastAPI.
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    location ^~ /assets/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    location = /index.html {
+        add_header Cache-Control "no-cache" always;
+    }
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+# Add www HTTP/HTTPS redirect virtual hosts only after DNS and a valid certificate
+# covering www.codesentry.tech exist. Preserve $request_uri in those redirects.

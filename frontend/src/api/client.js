@@ -43,7 +43,7 @@ export function setUnauthorizedHandler(fn) {
 client.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && error.config?.url !== '/api/auth/login') {
+    if (error.response?.status === 401 && !['/api/auth/login', '/api/auth/register'].includes(error.config?.url)) {
       clearToken()
       onUnauthorized?.()
     }
@@ -55,6 +55,13 @@ client.interceptors.response.use(
 // backend stack trace), per the app's error-state requirements.
 export function toUserMessage(error) {
   const status = error.response?.status
+  if (error.config?.url === '/api/auth/register') {
+    if (!error.response) return 'Unable to reach CodeSentry. Check your connection and try again.'
+    if (status === 409) return 'Unable to create an account with these details. Try signing in or use different details.'
+    if (status === 400 || status === 422) return 'Enter a valid email and a password of 8–128 characters.'
+    if (status === 429) return 'Too many attempts. Please wait before trying again.'
+    return 'Unable to create your account right now. Please try again later.'
+  }
   if (!error.response) {
     return 'Unable to reach CodeSentry. Check that the backend is running.'
   }

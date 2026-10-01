@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { AlertCircle, ShieldHalf } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { toUserMessage } from '../api/client'
@@ -11,7 +11,7 @@ export function Login() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(false)
-  const { login, sessionExpired, clearSessionExpired } = useAuth()
+  const { login, isAuthenticated, sessionExpired, clearSessionExpired } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -26,13 +26,15 @@ export function Login() {
     try {
       await login(email.trim(), password)
       clearSessionExpired()
-      navigate(location.state?.from || '/dashboard', { replace: true })
+      navigate('/', { replace: true })
     } catch (loginError) {
       setError(toUserMessage(loginError))
     } finally {
       setLoading(false)
     }
   }
+
+  if (isAuthenticated) return <Navigate to="/" replace />
 
   return (
     <div className="auth-screen">
@@ -44,6 +46,7 @@ export function Login() {
           <h1>Sign in</h1>
           <p className="cs-description">Access your CodeSentry workspace.</p>
 
+          {location.state?.registered && <p role="status" className="cs-description">Account created. Sign in to continue.</p>}
           {sessionExpired && <div className="cs-alert"><AlertCircle size={17} /> <span>Your session has expired. Please sign in again.</span></div>}
           {error && <div className="cs-alert"><AlertCircle size={17} /> <span>{error}</span></div>}
 
@@ -78,6 +81,7 @@ export function Login() {
               {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
+          <p className="cs-description">New to CodeSentry? <Link to="/signup">Create an account</Link></p>
         </section>
       </main>
     </div>

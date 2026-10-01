@@ -58,14 +58,14 @@ def _mark_stale_scans_failed(db: Session, user_id: int) -> None:
 def register(payload: RegisterRequest, db: Session = Depends(get_db)):
     existing = db.scalar(select(User).where(User.email == payload.email.lower()))
     if existing:
-        raise HTTPException(status_code=409, detail="Email already registered")
+        raise HTTPException(status_code=409, detail="Unable to create account with these details")
     user = User(email=payload.email.lower(), password_hash=hash_password(payload.password))
     db.add(user)
     try:
         db.commit()
     except IntegrityError:
         db.rollback()
-        raise HTTPException(status_code=409, detail="Email already registered") from None
+        raise HTTPException(status_code=409, detail="Unable to create account with these details") from None
     db.refresh(user)
     return TokenResponse(access_token=create_access_token(user.id))
 
@@ -76,7 +76,7 @@ def login(
     db: Session = Depends(get_db),
 ):
     user = db.scalar(
-        select(User).where(User.email == form_data.username.lower())
+        select(User).where(User.email == form_data.username.strip().lower())
     )
 
     valid = verify_password(form_data.password, user.password_hash if user else DUMMY_HASH)

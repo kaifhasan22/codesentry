@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './components/layout/ProtectedRoute'
 import { AppShell } from './components/layout/AppShell'
 import { Home } from './pages/Home'
+import { Signup } from './pages/Signup'
 import { Login } from './pages/Login'
 import { Dashboard } from './pages/Dashboard'
 import { NewScan } from './pages/NewScan'
@@ -15,6 +16,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route element={<ProtectedRoute><AppShell /></ProtectedRoute>}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/scans/new" element={<NewScan />} />
