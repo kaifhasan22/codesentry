@@ -21,7 +21,10 @@ class RepositoryCloneTimeoutError(RuntimeError):
     pass
 
 class RepositoryResourceError(RuntimeError):
-    pass
+    def __init__(self, reason: str | None = None):
+        # Only trusted guard identifiers; never expose Git stderr or repo content.
+        self.reason = reason if reason in {"workspace_bytes", "workspace_entries"} else None
+        super().__init__(self.reason or "repository_resource_limit")
 
 class RepositoryCloneError(RuntimeError):
     pass
@@ -86,7 +89,9 @@ def clone_github_repo(url: str) -> Path:
         if result.returncode == 124:
             raise RepositoryCloneTimeoutError()
         if result.returncode == 125:
-            raise RepositoryResourceError()
+            raise RepositoryResourceError("workspace_bytes")
+        if result.returncode == 127:
+            raise RepositoryResourceError("workspace_entries")
         if result.returncode:
             raise RepositoryCloneError()
     except subprocess.TimeoutExpired as exc:

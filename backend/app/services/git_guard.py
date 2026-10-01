@@ -13,7 +13,11 @@ import sys
 import time
 
 
-def usage(root, byte_limit, entry_limit):
+RESOURCE_BYTES_EXIT = 125
+RESOURCE_ENTRIES_EXIT = 127
+
+
+def resource_exit_code(root, byte_limit, entry_limit):
     size = count = 0
     for current, dirs, files in os.walk(root, followlinks=False):
         for name in dirs + files:
@@ -24,9 +28,15 @@ def usage(root, byte_limit, entry_limit):
                 continue  # Git atomically renames temporary pack/index files.
             if stat.S_ISREG(info.st_mode):
                 size += info.st_size
-            if size > byte_limit or count > entry_limit:
-                return False
-    return True
+            if size > byte_limit:
+                return RESOURCE_BYTES_EXIT
+            if count > entry_limit:
+                return RESOURCE_ENTRIES_EXIT
+    return 0
+
+
+def usage(root, byte_limit, entry_limit):
+    return resource_exit_code(root, byte_limit, entry_limit) == 0
 
 
 def main():
@@ -51,8 +61,9 @@ def main():
                     return 126
                 if time.monotonic() >= deadline:
                     return 124
-                if not usage(root, int(byte_limit), int(entry_limit)):
-                    return 125
+                resource_code = resource_exit_code(root, int(byte_limit), int(entry_limit))
+                if resource_code:
+                    return resource_code
                 result = proc.poll()
                 if result is not None:
                     if result:

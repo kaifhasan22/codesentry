@@ -180,7 +180,13 @@ def run_scan(self, scan_id: int) -> dict:
         logger.info("Scan %s completed elapsed=%.2fs", scan_id, perf_counter() - scan_started)
         return {"scan_id": scan.id, "status": scan.status, "issues": len(findings)}
     except Exception as exc:
-        logger.exception("Scan %s failed after %.2fs", scan_id, perf_counter() - scan_started)
+        expected = isinstance(exc, (RepositoryResourceError, RepositoryCloneError, RepositoryCloneTimeoutError))
+        if expected:
+            logger.warning("Scan %s rejected during preparation/analysis: %s elapsed=%.2fs",
+                           scan_id, exc.__class__.__name__ + ":" + (getattr(exc, "reason", None) or "unspecified"),
+                           perf_counter() - scan_started)
+        else:
+            logger.exception("Scan %s failed after %.2fs", scan_id, perf_counter() - scan_started)
         db.rollback()
         scan = db.get(Scan, scan_id)
         if scan:
@@ -190,12 +196,16 @@ def run_scan(self, scan_id: int) -> dict:
             scan.estimated_max_seconds = None
             scan.error_message = (
                 errors.CLONE_TIMEOUT if isinstance(exc, RepositoryCloneTimeoutError) else
+                errors.WORKSPACE_BYTES_ERROR if isinstance(exc, RepositoryResourceError) and exc.reason == "workspace_bytes" else
+                errors.WORKSPACE_ENTRIES_ERROR if isinstance(exc, RepositoryResourceError) and exc.reason == "workspace_entries" else
                 errors.RESOURCE_ERROR if isinstance(exc, RepositoryResourceError) else
                 errors.CLONE_ERROR if isinstance(exc, RepositoryCloneError) else
                 errors.SOFT_TIMEOUT if isinstance(exc, (SoftTimeLimitExceeded, TimeoutError)) else errors.GENERIC_ERROR
             )
             scan.finished_at = datetime.now(timezone.utc)
             db.commit()
+        if expected:
+            return {"scan_id": scan_id, "status": "failed"}
         raise
     finally:
         db.close()
